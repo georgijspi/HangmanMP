@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex justify-between items-center">
+    <!-- Game Visuals -->
+    <div class="w-1/2 relative">
+        <div id="character" style="left:{{ attempts_left * 52 }}px;">Character</div>
+        <div id="bridge" class="absolute bottom-20">
+            {% for i in range(6) %}
+                <div class="plank" id="plank{{ i }}"></div>
+            {% endfor %}
+        </div>
+        <div id="river" class="absolute bottom-0"></div>
+    </div>
+
+    <!-- Guessing Section -->
+    <div class="w-1/2 text-center">
+        <h2 class="text-2xl font-bold my-4">Guess the Word</h2>
+        <p>Clue: {{ clue }}</p>
+        <p>{{ display_word }}</p>
+        <p>Attempts left: {{ attempts_left }}</p>
+        <form action="{{ url_for('guess') }}" method="post">
+            <input type="text" name="letter" maxlength="1" placeholder="Enter a letter" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+                Guess
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const attemptsLeft = {{ attempts_left }};
+        const character = document.getElementById("character");
+
+        // Move character based on attempts left
+        character.style.left = `${attemptsLeft * 52}px`;
+
+        // Persistently hide fallen planks
+        for (let i = 5; i > attemptsLeft - 1; i--) {
+            const fallenPlank = document.getElementById(`plank${i}`);
+            if (fallenPlank) {
+                fallenPlank.style.display = 'none';
+            }
+        }
+    
+        // If out of attempts, make the character "fall"
+        if (attemptsLeft <= 0) {
+            character.style.bottom = "-30px";
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bridge and Character Layout</title>
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #eaeaea;
+  }
+  #river {
+    width: 100%;
+    height: 150px;
+    background-color: #00f;
+    position: absolute;
+    bottom: 0;
+  }
+  #bridge {
+    width: 60%;
+    height: 20px;
+    background-color: #964B00;
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    bottom: 160px; /* Height of the river plus some extra space */
+  }
+  .plank {
+    width: 14%;
+    height: 100%;
+    background-color: #A52A2A;
+  }
+  #character {
+    width: 50px;
+    height: 50px;
+    background-color: #f0f;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 50px;
+    color: white;
+    position: absolute;
+    bottom: 190px; /* Height of the river plus bridge height plus extra space */
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+
+<div id="character">Character</div>
+<div id="bridge">
+  <div class="plank"></div>
+  <div class="plank"></div>
+  <div class="plank"></div>
+  <div class="plank"></div>
+  <div class="plank"></div>
+  <div class="plank"></div>
+</div>
+<div id="river"></div>
+
+</body>
+</html>

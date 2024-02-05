@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="text-center">
+        <h2 class="text-2xl font-bold my-4">Set the Word and Clue</h2>
+        <form action="{{ url_for('set_word') }}" method="post">
+            <input type="text" name="word" placeholder="Enter the word" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <input type="text" name="clue" placeholder="Enter a clue" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+                Submit
+            </button>
+        </form>
+    </div>
+{% endblock %}
