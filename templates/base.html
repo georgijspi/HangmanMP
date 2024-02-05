@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Hangman Game</title>
     <link href="https://cdn.tailwindcss.com" rel="stylesheet">
     <style>
@@ -39,23 +40,83 @@
             bottom: 190px; /* Height of the river plus bridge height plus extra space */
             z-index: 1;
         }
-        
+
+        #game-status {
+            position: absolute;
+            bottom: 270px; /* Adjust this value based on the character's position and desired height of the message */
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #000; /* Set text color */
+            font-size: 24px; /* Set text size */
+            z-index: 2; /* Ensure it's above the character */
+        }
+
         .fall-animation {
-            animation: fall 1s forwards;
-        }
-    
-        @keyframes fall {
-            to { transform: translateY(150px); opacity: 0; } /* Adjust as needed */
+            animation: fall-and-bob 3s forwards ease-in-out;
         }
 
-        .jump-animation {
-            animation: jump 1s ease-in-out infinite;
+        @keyframes fall-and-bob {
+            0% { 
+                transform: translateY(0) rotate(0deg); 
+            }
+            33% {
+                transform: translateY(150px) rotate(45deg); /* Fall to the river */
+            }
+            50% {
+                transform: translateY(140px) rotate(45deg); /* Start bobbing - up */
+            }
+            66% {
+                transform: translateY(150px) rotate(45deg); /* Bobbing - down */
+            }
+            100% {
+                transform: translateY(140px) rotate(45deg); /* Bobbing - up */
+            }
         }
 
-        @keyframes jump {
+        .single-jump {
+            animation: singleJump 0.5s ease-in-out;
+        }
+
+        @keyframes singleJump {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); } /* Adjust for jump height */
+            50% { transform: translateY(-30px); }
         }
+
+        .infinite-jump {
+            animation: infiniteJump 0.7s ease-in-out infinite;
+        }
+
+        @keyframes infiniteJump {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+
+        #game-modal {
+            z-index: 10; /* Ensure it appears above other elements */
+        }
+
+        #game-modal.hidden {
+            display: none;
+        }
+/* 
+        .jump-once {
+            animation: jump-once 0.5s ease-in-out;
+        }
+
+        .jump-infinite {
+            animation: jump-infinite 1s ease-in-out infinite;
+        }
+
+        @keyframes jump-once {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes jump-infinite {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        } */
     </style>
     
 </head>

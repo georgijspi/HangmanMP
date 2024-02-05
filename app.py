@@ -23,17 +23,13 @@ def guess():
         if 'letter' in request.form:
             letter = request.form['letter']
             game.guess_letter(letter)
-            if game.is_word_guessed():
-                return render_template('win.html', word=game.secret_word, won=True)
-            elif game.attempts_left <= 0:
-                return render_template('win.html', word=game.secret_word, won=False)
         elif 'word_guess' in request.form:
             word_guess = request.form['word_guess']
             if word_guess.lower() == game.secret_word:
-                return render_template('win.html', word=game.secret_word, won=True)
-            else:
-                return render_template('win.html', word=game.secret_word, won=False)
-    return render_template('guess.html', display_word=game.get_display_word(), attempts_left=game.attempts_left, clue=game.clue, previous_attempts=game.previous_attempts)
+                game.attempts_left = 0  # Ensure the game ends
+
+    # Pass the game object to the template
+    return render_template('guess.html', game=game, display_word=game.get_display_word(), attempts_left=game.attempts_left, clue=game.clue)
 
 @app.route('/win')
 def win():

@@ -1,30 +1,39 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="flex justify-between items-center">
+<div>
     <!-- Game Visuals -->
-    <div class="w-1/2 relative">
+    <div>
+        <div id="game-status"></div>
         <div id="character" style="left:{{ attempts_left * 52 }}px;">Character</div>
-        <div id="bridge" class="absolute bottom-20">
+        <div id="bridge">
             {% for i in range(6) %}
                 <div class="plank" id="plank{{ i }}"></div>
             {% endfor %}
         </div>
-        <div id="river" class="absolute bottom-0"></div>
+        <div id="river"></div>
     </div>
 
     <!-- Guessing Section -->
-    <div class="w-1/2 text-center">
-        <h2 class="text-2xl font-bold my-4">Guess the Word</h2>
+    <div>
+        <h2>Guess the Word</h2>
         <p>Clue: {{ clue }}</p>
         <p>{{ display_word }}</p>
         <p>Attempts left: {{ attempts_left }}</p>
         <form action="{{ url_for('guess') }}" method="post">
-            <input type="text" name="letter" maxlength="1" placeholder="Enter a letter" class="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
-            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
-                Guess
-            </button>
+            <input type="text" name="letter" maxlength="1" placeholder="Enter a letter" required>
+            <button type="submit">Guess</button>
         </form>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="game-modal" class="hidden">
+    <div>
+        <div id="modal-content">
+            <!-- Content will be dynamically added here -->
+        </div>
+        <button id="modal-close">Close</button>
     </div>
 </div>
 
@@ -32,21 +41,58 @@
     document.addEventListener("DOMContentLoaded", function() {
         const attemptsLeft = {{ attempts_left }};
         const character = document.getElementById("character");
+        const gameStatus = document.getElementById("game-status");
+        const wordGuessed = {{ game.is_word_guessed()|tojson }};
 
         // Move character based on attempts left
         character.style.left = `${attemptsLeft * 52}px`;
 
-        // Persistently hide fallen planks
-        for (let i = 5; i > attemptsLeft - 1; i--) {
+        // Hide fallen planks and animate a single jump for each incorrect guess
+        let previousAttempts = {{ game.previous_attempts }};
+        for (let i = 5; i >= attemptsLeft; i--) {
             const fallenPlank = document.getElementById(`plank${i}`);
             if (fallenPlank) {
                 fallenPlank.style.display = 'none';
+                if (i == previousAttempts - 1) {
+                    character.classList.add('single-jump');
+                    setTimeout(() => character.classList.remove('single-jump'), 500); // Duration of single jump
+                }
             }
         }
-    
-        // If out of attempts, make the character "fall"
+
+        // If out of attempts, make the character "fall" and display "Oh no!"
         if (attemptsLeft <= 0) {
-            character.style.bottom = "-30px";
+            character.classList.add('fall-animation');
+            gameStatus.textContent = "Oh no!";
+        } else if (wordGuessed) {
+            // Display "Yay" and apply infinite jumping animation to the character
+            gameStatus.textContent = "Yay!";
+            character.classList.add('infinite-jump');
+        }
+
+        const gameModal = document.getElementById('game-modal');
+        const modalContent = document.getElementById('modal-content');
+        const modalClose = document.getElementById('modal-close');
+
+        // Show modal with appropriate message
+        function showModal(message) {
+            modalContent.innerHTML = message;
+            gameModal.classList.remove('hidden');
+        }
+
+        // Close modal and reset game if needed
+        modalClose.addEventListener('click', function() {
+            gameModal.classList.add('hidden');
+            // Add logic here if you need to reset the game
+        });
+
+        // Game logic
+        if (attemptsLeft <= 0) {
+            // ... existing losing code ...
+            showModal('<p>Oh no! Try again?</p><button onclick="location.reload()">Try Again</button>');
+        } else if (wordGuessed) {
+            // ... existing winning code ...
+            showModal('<p>You got it right!</p><p>The word was: ' + '{{ game.secret_word }}' + '</p>');
         }
     });
 </script>
